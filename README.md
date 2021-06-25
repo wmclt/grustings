@@ -8,7 +8,5 @@ a result, you'll need to have `sqlite3` and its headers installed:
   * **Arch:** `pacman -S sqlite`
 
 
-# ONS IDEE
-
-- chat applicatie
-- 
+# Our Idea
+Turn this code example in to a chat application. The original code comes from the `/examples/todo` folder of the [Rocket framework's repository](https://github.com/SergioBenitez/Rocket/).
