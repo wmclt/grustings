@@ -16,7 +16,7 @@ struct Login<'r> {
 }
 
 #[derive(Debug)]
-struct Principal(usize);
+struct Principal(String);
 
 #[rocket::async_trait]
 impl<'r> FromRequest<'r> for Principal {
@@ -24,7 +24,7 @@ impl<'r> FromRequest<'r> for Principal {
 
     async fn from_request(request: &'r Request<'_>) -> request::Outcome<Principal, Self::Error> {
         request.cookies()
-            .get_private("user_id")
+            .get_private("username")
             .and_then(|cookie| cookie.value().parse().ok())
             .map(Principal)
             .or_forward(())
@@ -43,9 +43,9 @@ use crate::{Context, DbConn};
 
 #[get("/")]
 fn index(user: Principal) -> Template {
-    let mut context = HashMap::new();
-    context.insert("user_id", user.0);
-    Template::render("session", &context)
+    let mut template_context = HashMap::new();
+    template_context.insert("username", user.0);
+    Template::render("session", &template_context)
 }
 
 #[get("/", rank = 2)]
@@ -68,16 +68,9 @@ async fn login_page(flash: Option<FlashMessage<'_>>, conn: DbConn) -> Template {
 async fn post_login(jar: &CookieJar<'_>, login: Form<Login<'_>>, conn: DbConn) -> Result<Redirect, Flash<Redirect>> {
     //if login.username == "Sergio" && login.password == "password" {
    let successful = User::exists(login.username.to_string(), login.password.to_string(), &conn).await;
-   print!("logging: username {} & password: {}", login.username, login.password);
-
-   let users: Vec<User> = User::all(&conn).await.unwrap();
-   for user in users{
-       print!("User: {:?}", user);
-   }
 
     if successful {
-        print!("logging: {}", successful);
-        jar.add_private(Cookie::new("user_id", 1.to_string()));
+        jar.add_private(Cookie::new("username", login.username.to_string()));
         Ok(Redirect::to(uri!(index)))
     } else {
         Err(Flash::error(Redirect::to(uri!(login_page)), "Invalid username/password."))
@@ -86,7 +79,7 @@ async fn post_login(jar: &CookieJar<'_>, login: Form<Login<'_>>, conn: DbConn) -
 
 #[post("/logout")]
 fn logout(jar: &CookieJar<'_>) -> Flash<Redirect> {
-    jar.remove_private(Cookie::named("user_id"));
+    jar.remove_private(Cookie::named("username"));
     Flash::success(Redirect::to(uri!(login_page)), "Successfully logged out.")
 }
 

@@ -8,7 +8,6 @@ let roomTemplate = document.getElementById('room');
 let messageTemplate = document.getElementById('message');
 
 let messageField = newMessageForm.querySelector("#message");
-let usernameField = newMessageForm.querySelector("#username");
 let roomNameField = newRoomForm.querySelector("#name");
 
 var STATE = {
@@ -76,6 +75,7 @@ function addMessage(room, username, message, push = false) {
 
   if (STATE.room == room) {
     var node = messageTemplate.content.cloneNode(true);
+   
     node.querySelector(".message .username").textContent = username;
     node.querySelector(".message .username").style.color = hashColor(username);
     node.querySelector(".message .text").textContent = message;
@@ -139,13 +139,12 @@ function init() {
 
     const room = STATE.room;
     const message = messageField.value;
-    const username = usernameField.value || "guest";
-    if (!message || !username) return;
+    if (!message) return;
 
     if (STATE.connected) {
       fetch("/chat/message", {
         method: "POST",
-        body: new URLSearchParams({ room, username, message }),
+        body: new URLSearchParams({ room, message }),
       }).then((response) => {
         if (response.ok) messageField.value = "";
       });

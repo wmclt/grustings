@@ -18,7 +18,7 @@
    <div class="container">
 
       <h1>Rocket Session Example</h1>
-      <p>Logged in with user ID {{ user_id }}.</p>
+      <p>Logged in with username {{ username }}.</p>
       <form action="/session/logout" method="post" accept-charset="utf-8">
          <input type="submit" name="logout" id="logout" value="logout" />
       </form>
