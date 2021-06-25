@@ -1,24 +1,36 @@
 <!DOCTYPE html>
 <html>
-  <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width" />
-    <title>Rocket: Cookie Message</title>
-  </head>
-  <body>
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width" />
+  <title>Rocket: Cookie Message</title>
+
+  <link href="//fonts.googleapis.com/css?family=Raleway:400,300,600" rel="stylesheet" type="text/css">
+  <link rel="stylesheet" href="/css/normalize.css">
+  <link rel="stylesheet" href="/css/skeleton.css">
+  <link rel="stylesheet" href="/css/style.css">
+  <link rel="stylesheet" href="/css/sidenav.css">
+  <link rel="icon" type="image/png" href="/images/favicon.png">
+</head>
+
+<body>
+  <div class="container">
+
     <h1>Rocket Cookie Message</h1>
     {% if message %}
-      <p>{{message}}</p>
+    <p>{{message}}</p>
     {% else %}
-      <p>No message yet.</p>
+    <p>No message yet.</p>
     {% endif %}
 
     <form action="/message" method="post" accept-charset="utf-8">
-      <textarea placeholder="Your message here..."
-        name="message" rows="10" cols="50"></textarea>
+      <textarea placeholder="Your message here..." name="message" rows="10" cols="50"></textarea>
       <p><input type="submit" value="Set Cookie"></p>
     </form>
 
     <a href="/">Home</a>
-  </body>
+  </div>
+</body>
+
 </html>

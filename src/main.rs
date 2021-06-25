@@ -9,6 +9,7 @@ mod task;
 mod conversation;
 mod users;
 mod session;
+mod chat;
 
 use rocket::{Rocket, Build};
 use rocket::fairing::AdHoc;
@@ -17,6 +18,8 @@ use rocket::response::{Flash, Redirect};
 use rocket::serde::Serialize;
 use rocket::form::Form;
 use rocket::fs::{FileServer, relative};
+use rocket::tokio::sync::broadcast::{channel};
+
 
 use rocket_dyn_templates::Template;
 
@@ -113,8 +116,10 @@ fn rocket() -> _ {
         .attach(DbConn::fairing())
         .attach(Template::fairing())
         .attach(AdHoc::on_ignite("Run Migrations", run_migrations))
+        .manage(channel::<chat::Message>(1024).0)
         .mount("/", FileServer::from(relative!("static")))
         .mount("/", routes![index])
+        .mount("/chat", chat::routes())
         .mount("/session",session::routes())
         .mount("/todo", routes![new, toggle, delete])
 }

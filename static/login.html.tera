@@ -1,19 +1,30 @@
 <!DOCTYPE html>
 <html>
-   <head>
-      <meta charset="utf-8" />
-      <meta name="viewport" content="width=device-width" />
-      <title>Rocket: Sessions</title>
-   </head>
-   <body>
+
+<head>
+   <meta charset="utf-8" />
+   <meta name="viewport" content="width=device-width" />
+   <title>Rocket: Sessions</title>
+
+   <link href="//fonts.googleapis.com/css?family=Raleway:400,300,600" rel="stylesheet" type="text/css">
+   <link rel="stylesheet" href="/css/normalize.css">
+   <link rel="stylesheet" href="/css/skeleton.css">
+   <link rel="stylesheet" href="/css/style.css">
+   <link rel="stylesheet" href="/css/sidenav.css">
+   <link rel="icon" type="image/png" href="/images/favicon.png">
+</head>
+
+<body>
+   <div class="container">
+
       <h1>Rocket Session: Please Login</h1>
 
-     <p>Please login to continue.</p>
-        
+      <p>Please login to continue.</p>
+
       {% if message %}
-         <p>{% if kind %} {{kind}}: {% endif %} {{ message }}</p>
+      <p>{% if kind %} {{kind}}: {% endif %} {{ message }}</p>
       {% endif %}
-        
+
       <form action="/session/login" method="post" accept-charset="utf-8">
          <label for="username">username</label>
          <input type="text" name="username" id="username" value="" />
@@ -23,5 +34,7 @@
       </form>
 
       <a href="/">Home</a>
-   </body>
+   </div>
+</body>
+
 </html>
