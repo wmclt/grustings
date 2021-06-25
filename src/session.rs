@@ -8,6 +8,7 @@ use rocket::form::Form;
 
 use rocket_dyn_templates::Template;
 
+
 #[derive(FromForm)]
 struct Login<'r> {
     username: &'r str,
@@ -37,6 +38,7 @@ macro_rules! session_uri {
 
 pub use session_uri as uri;
 
+use crate::users::User;
 use crate::{Context, DbConn};
 
 #[get("/")]
@@ -63,8 +65,18 @@ async fn login_page(flash: Option<FlashMessage<'_>>, conn: DbConn) -> Template {
 }
 
 #[post("/login", data = "<login>")]
-fn post_login(jar: &CookieJar<'_>, login: Form<Login<'_>>) -> Result<Redirect, Flash<Redirect>> {
-    if login.username == "Sergio" && login.password == "password" {
+async fn post_login(jar: &CookieJar<'_>, login: Form<Login<'_>>, conn: DbConn) -> Result<Redirect, Flash<Redirect>> {
+    //if login.username == "Sergio" && login.password == "password" {
+   let successful = User::exists(login.username.to_string(), login.password.to_string(), &conn).await;
+   print!("logging: username {} & password: {}", login.username, login.password);
+
+   let users: Vec<User> = User::all(&conn).await.unwrap();
+   for user in users{
+       print!("User: {:?}", user);
+   }
+
+    if successful {
+        print!("logging: {}", successful);
         jar.add_private(Cookie::new("user_id", 1.to_string()));
         Ok(Redirect::to(uri!(index)))
     } else {

@@ -33,11 +33,19 @@ pub struct CreateUser {
     pub password: String,
 }
 
-
 impl User {
     pub async fn all(conn: &DbConn) -> QueryResult<Vec<User>> {
         conn.run(|c| {
             all_users.order(users::id.desc()).load::<User>(c)
+        }).await
+    }
+
+    pub async fn exists(username: String, password: String, conn: &DbConn) -> bool {
+        conn.run(move |c| {
+            users::table
+                .filter(users::username.eq(username))
+                .filter(users::password.eq(password))
+                .first::<User>(c).is_ok()
         }).await
     }
 

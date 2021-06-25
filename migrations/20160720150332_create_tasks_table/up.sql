@@ -6,3 +6,17 @@ CREATE TABLE tasks (
 
 INSERT INTO tasks (description) VALUES ("demo task");
 INSERT INTO tasks (description) VALUES ("demo task2");
+
+CREATE TABLE conversations (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    user1 INTEGER NOT NULL,
+    user2 INTEGER NOT NULL
+);
+
+CREATE TABLE users (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    username TEXT NOT NULL,
+    password TEXT NOT NULL
+);
+
+INSERT INTO users (username, password) VALUES ("ben", "ben");
