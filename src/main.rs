@@ -6,7 +6,9 @@
 #[cfg(test)]
 mod tests;
 mod task;
-//mod conversation;
+mod conversation;
+mod users;
+mod session;
 
 use rocket::{Rocket, Build};
 use rocket::fairing::AdHoc;
@@ -113,5 +115,6 @@ fn rocket() -> _ {
         .attach(AdHoc::on_ignite("Run Migrations", run_migrations))
         .mount("/", FileServer::from(relative!("static")))
         .mount("/", routes![index])
+        .mount("/session",session::routes())
         .mount("/todo", routes![new, toggle, delete])
 }

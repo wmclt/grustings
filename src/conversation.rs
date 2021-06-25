@@ -1,77 +1,74 @@
 use rocket::serde::Serialize;
 use diesel::{self, result::QueryResult, prelude::*};
-use uuid::Uuid;
 
 mod schema {
     table! {
         conversations {
-            id -> uuid::Uuid,
-            user1 -> uuid::Uuid,
-            user2 -> uuid::Uuid,
+            id -> Integer,
+            user1 -> Integer,
+            user2 -> Integer,
         }
-    }
-    table! {
-        users {
-            id -> Uuid,
-            username -> String,
-            password-> String,
-        }
-    }
+    }/* 
     table! {
         message {
-            id -> uuid::Uuid,
-            conversation -> uuid::Uuid,
-            sender -> uuid::Uuid,
-            text -> String,
+            id -> Integer,
+            conversation -> Integer,
+            sender -> Integer,
+            text -> Text,
         }
-    }
+    } */
 }
 
 use self::schema::conversations;
-use self::schema::conversations::dsl::{conversations as all_convs, completed as conv_completed};
+use self::schema::conversations::dsl::{conversations as all_convs};
 
 use crate::DbConn;
 
-#[derive(Serialize, Queryable, Insertable, Debug, Clone)]
+#[derive(Serialize, Queryable, Debug, Clone)]
 #[serde(crate = "rocket::serde")]
-#[table_name="conversations"]
 pub struct Conversation {
-    pub id: Uuid,
-    pub user1: Uuid,
-    pub user2: Uuid
+    pub id: i32,
+    pub user1: i32,
+    pub user2: i32
 }
 
+#[derive(Debug, FromForm, Insertable)]
+#[table_name="conversations"]
+pub struct CreateConversation {
+    pub user1: i32,
+    pub user2: i32
+}
+/* 
 #[derive(Debug, FromForm)]
 pub struct NewMessage {
-    pub conversation: Uuid,
-    pub sender: Uuid,
+    pub conversation: i32,
+    pub sender: i32,
     pub text: String,
-}
+} */
 
 impl Conversation {
     pub async fn all(conn: &DbConn) -> QueryResult<Vec<Conversation>> {
         conn.run(|c| {
-            all_convs.order(tasks::id.desc()).load::<Conversation>(c)
+            all_convs.order(conversations::id.desc()).load::<Conversation>(c)
         }).await
     }
 
     /// Returns the number of affected rows: 1.
-    pub async fn insert(new_message: NewMessage, conn: &DbConn) -> QueryResult<usize> {
-        conn.run(|c| {
-            let t = Conversation { id: None, description: new_message.description, completed: false };
-            diesel::insert_into(tasks::table).values(&t).execute(c)
-        }).await
-    }
-
-    /// Returns the number of affected rows: 1.
-    pub async fn toggle_with_id(id: i32, conn: &DbConn) -> QueryResult<usize> {
+    pub async fn insert(create_conv: CreateConversation, conn: &DbConn) -> QueryResult<usize> {
         conn.run(move |c| {
-            let task = all_convs.find(id).get_result::<Conversation>(c)?;
-            let new_status = !task.completed;
-            let updated_task = diesel::update(all_convs.find(id));
-            updated_task.set(task_completed.eq(new_status)).execute(c)
+            diesel::insert_into(conversations::table).values(&create_conv).execute(c)
         }).await
     }
+
+    /// Returns the number of affected rows: 1.
+    // pub async fn toggle_with_id(id: i32, conn: &DbConn) -> QueryResult<usize> {
+    //     conn.run(move |c| {
+    //         let task = all_convs.find(id).get_result::<Conversation>(c)?;
+    //         let new_status = !task.completed;
+    //         let updated_task = diesel::update(all_convs.find(id));
+    //         updated_task.set(task_completed.eq(new_status)).execute(c)
+    //     }).await
+    // }
 
     /// Returns the number of affected rows: 1.
     pub async fn delete_with_id(id: i32, conn: &DbConn) -> QueryResult<usize> {

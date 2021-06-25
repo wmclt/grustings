@@ -17,6 +17,10 @@
   <div class="container">
     <p><!--Nothing to see here --></p>
 
+    <h4>Login</h4>
+    <a href="session">Log in</a>.
+    <br />
+    
     <div class="row">
       <h4>Rocket Todo</h4>
       <form action="/todo" method="post">
