@@ -20,3 +20,4 @@ CREATE TABLE users (
 );
 
 INSERT INTO users (username, password) VALUES ("ben", "ben");
+INSERT INTO users (username, password) VALUES ("will", "will");
